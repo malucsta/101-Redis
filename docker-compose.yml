@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  project.api:
+    image: ${DOCKER_REGISTRY-}projectapi
+    build:
+      context: .
+      dockerfile: Project.API/Dockerfile
+    networks:
+      - data-network
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - data-network
+
+networks:
+  data-network:  
+    driver: bridge
