@@ -4,10 +4,15 @@ namespace Project.Redis.Connection;
 
 public class RedisConnectionManager : IRedisConnectionManager
 {
-    private static readonly Lazy<ConnectionMultiplexer> lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
+    private readonly Lazy<ConnectionMultiplexer> lazyConnection;
+
+    public RedisConnectionManager(RedisSettings settings)
     {
-        return ConnectionMultiplexer.Connect("redis"); // Substitua "localhost" pelo endereço do seu servidor Redis
-    });
+        lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
+        {
+            return ConnectionMultiplexer.Connect(settings.ConnectionString);
+        });
+    }
 
     public ConnectionMultiplexer GetConnection() => lazyConnection.Value;
 }

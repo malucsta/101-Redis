@@ -8,17 +8,12 @@ public class RedisRateLimiter : IRateLimiter
     private readonly IDatabase _database;
     private readonly TimeSpan _expirationTime; 
 
-    public RedisRateLimiter()
+    public RedisRateLimiter(RedisSettings settings)
     {
-        var connection = new RedisConnectionManager().GetConnection();
+        var connection = new RedisConnectionManager(settings).GetConnection();
         _database = connection.GetDatabase();
 
-        var time = Environment.GetEnvironmentVariable("RateLimitExpirationInSeconds");
-        
-        _expirationTime = int.TryParse(time, out int expiration) 
-            ? TimeSpan.FromSeconds(expiration) 
-            : _expirationTime = TimeSpan.FromSeconds(300);
-
+        _expirationTime = TimeSpan.FromSeconds(settings.RateLimitExpirationInSeconds);
     }
 
     public async Task<bool> IsLimited(string key, int limit)
